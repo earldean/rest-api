@@ -18,7 +18,6 @@ namespace ArtistApi.Models
         public DbSeed()
         {
             PopulateDb();
-            
         }
 
         public void PopulateDb()
@@ -39,8 +38,7 @@ namespace ArtistApi.Models
                     else
                     {
                         ParseString(line);
-                    }
-                    
+                    }  
                 }
             }
         }
@@ -69,7 +67,7 @@ namespace ArtistApi.Models
             int index = data.LastIndexOf("\"");
 
             string albumName = data.Substring(1, index + 1); // start at one to not include first comma
-            string rest = data.Substring(index + 2); // + 2 to skip over coma
+            string rest = data.Substring(index + 2); // + 2 to skip over comma
             return returnVal;
         }
     }
