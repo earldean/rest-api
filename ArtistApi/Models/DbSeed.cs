@@ -25,32 +25,32 @@ namespace ArtistApi.Models
             string dir = AppContext.BaseDirectory;
             using (var reader = new StreamReader(new FileStream(Path.Combine(dir, "albums.csv"), FileMode.Open)))
             {
+                HashSet<string> artists = new HashSet<string>();
                 var firstline = reader.ReadLine(); // read the first line which just has colum names
                 while (!reader.EndOfStream)
                 {
-                    var line = reader.ReadLine();
-                    string[] values;
-                    if (!line.Contains("\""))
+                    var line = reader.ReadLine().ToLower();
+                    string[] albumInfo = ParseAlbumInfo(line);
+                    string artist = albumInfo[1];
+
+                    if (artists.Contains(artist))
                     {
-                        values = line.Split(',');
-                        InsertArtist(values);
+                        continue;
                     }
-                    else
-                    {
-                        ParseString(line);
-                    }  
+                    artists.Add(artist);
+                    InsertArtist(artist);
                 }
             }
         }
 
-        private void InsertArtist(string[] data)
+        private void InsertArtist(string artist)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 Guid guid = Guid.NewGuid();
                 connection.Open();
                 string commandString = @"Insert Into ArtistName Values (" + "'" + guid + "'" + 
-                    ", " + "'" + data[1].ToLower().Replace(" ", "-") + "'" + ")";
+                    ", " + "'" + artist + "'" + ")";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.ExecuteScalar();
             }
@@ -61,14 +61,26 @@ namespace ArtistApi.Models
 
         }
 
-        private string[] ParseString(string data)
+        private string[] ParseAlbumInfo(string line)
         {
-            string[] returnVal = new string[4];
-            int index = data.LastIndexOf("\"");
-
-            string albumName = data.Substring(1, index + 1); // start at one to not include first comma
-            string rest = data.Substring(index + 2); // + 2 to skip over comma
-            return returnVal;
+            string[] albumInfo = new string[4];
+            // album name might have commas in it, so have to do some extra parsing
+            if (line.Contains("\""))
+            {
+                int index = line.LastIndexOf("\"");
+                string albumName = line.Substring(1, index - 1); // start at 1 to not include first comma
+                string rest = line.Substring(index + 2); // + 2 to skip over comma
+                string[] splitRest = rest.Split(',');
+                albumInfo[0] = albumName;
+                albumInfo[1] = splitRest[0];
+                albumInfo[2] = splitRest[1];
+                albumInfo[3] = splitRest[2];
+            }
+            else // standard csv format so just slpit on a comma
+            {
+                albumInfo = line.Split(',');
+            }
+            return albumInfo;
         }
     }
 }
