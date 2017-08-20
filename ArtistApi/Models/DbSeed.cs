@@ -18,7 +18,7 @@ namespace ArtistApi.Models
 
         public DbSeed()
         {
-            //artistQuieries = new ArtistDbQuires();
+            artistQuieries = new ArtistDbQuires(connectionString);
             PopulateDb();
         }
 
@@ -38,6 +38,7 @@ namespace ArtistApi.Models
                     if (!artists.Contains(artist))
                     {
                         artistQuieries.InsertNewArtist(artist);
+                        artists.Add(artist);
                     }
                     artistQuieries.InsertNewAlbum(albumInfo);
                 }
