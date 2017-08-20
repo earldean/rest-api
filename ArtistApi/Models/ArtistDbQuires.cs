@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Data.SqlClient;
 using ArtistApi.Interfaces;
 using System.Data;
@@ -33,6 +34,56 @@ namespace ArtistApi.Models
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
                 Guid artistId = (Guid)command.ExecuteScalar();
                 return artistId;
+            }
+        }
+
+        public List<string> GetAllArtist()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string commandString = "select ArtistName from ArtistName";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.CommandType = CommandType.Text;
+                List<string> artists = new List<string>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            artists.Add(reader.GetString(0));
+                        }
+                        reader.NextResult();
+                    }
+                }
+                return artists;
+           }
+        }
+
+        public List<string> GetAlbums(string artistName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string commandString =
+                    "Select AlbumName from Albums where artistName = @ArtistName";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.CommandType = CommandType.Text;
+                command.Parameters.Add("@ArtistName", SqlDbType.NVarChar).Value = artistName;
+                List<string> albums = new List<string>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            albums.Add((string)reader.GetValue(0));
+                        }
+                        reader.NextResult();
+                    }
+                }
+                return albums;
             }
         }
 

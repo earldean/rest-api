@@ -12,5 +12,9 @@ namespace ArtistApi.Interfaces
         Guid InsertNewArtist(string artist);
 
         void InsertNewAlbum(string[] albumInfo);
+
+        List<string> GetAllArtist();
+
+        List<string> GetAlbums(string artistName);
     }
 }

@@ -18,7 +18,7 @@ namespace ArtistApi.Models
 
         public DbSeed()
         {
-            artistQuieries = new ArtistDbQuires(connectionString);
+            //artistQuieries = new ArtistDbQuires();
             PopulateDb();
         }
 

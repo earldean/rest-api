@@ -15,34 +15,39 @@ namespace ArtistApi.Controllers
     [Route("api/[controller]")]
     public class AlbumController : Controller
     {
-        // GET: api/values
+        public AlbumController()
+        {
+
+        }
+
+        // GET: api/album
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            DbSeed dbSeed = new DbSeed();
+            //DbSeed dbSeed = new DbSeed();
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
+        // GET api/Album/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/values
+        // POST api/album
         [HttpPost]
         public void Post([FromBody]string value)
         {
         }
 
-        // PUT api/values/5
+        // PUT api/album/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE api/album
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
