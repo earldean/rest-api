@@ -1,5 +1,8 @@
 # rest-api
 .Net core Web API Example
 
-Visual Studio 2017 required
-.Net Core required.
+## dependencies
+* Visual Studio 2017
+* .Net Core framework
+* Microsoft SQL Server Express 
+* PostMan for testing
