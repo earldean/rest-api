@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArtistApi.Types;
 
 namespace ArtistApi.Interfaces
 {
@@ -13,7 +14,7 @@ namespace ArtistApi.Interfaces
 
         void InsertNewAlbum(string[] albumInfo);
 
-        List<string> GetAllArtist();
+        List<ArtistValues> GetAllArtist();
 
         List<string> GetAlbums(string artistName);
 

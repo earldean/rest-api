@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Data.SqlClient;
 using ArtistApi.Interfaces;
+using ArtistApi.Types;
 using System.Data;
 
 namespace ArtistApi.Models
@@ -37,22 +38,27 @@ namespace ArtistApi.Models
             }
         }
 
-        public List<string> GetAllArtist()
+        public List<ArtistValues> GetAllArtist()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string commandString = "select ArtistName from Artists";
+                string commandString = "select * from Artists";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.CommandType = CommandType.Text;
-                List<string> artists = new List<string>();
+                List<ArtistValues> artists = new List<ArtistValues>();
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            artists.Add(reader.GetString(0));
+                            ArtistValues value = new ArtistValues()
+                            {
+                                Id = reader.GetInt32(0),
+                                ArtistName = reader.GetString(1)
+                            };
+                            artists.Add(value);
                         }
                         reader.NextResult();
                     }
