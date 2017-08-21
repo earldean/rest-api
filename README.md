@@ -8,5 +8,10 @@
 * Postan for testing
 
 ## API endpoints 
-* *HTTPGET* api/album/id 
-: Returns ArtistInfo object
+* *GET* api/album/id - Param: artistId Returns ArtistInfo object
+* *POST* api/album - Param: ArtistInfo JSON in body
+* *PUT* api/album/id - Param: ArtistId, AlbumInfo JSON in body
+* *DELETE* api/album/id - Param: ArtistId
+
+* *GET* api/artist/all - Returns { *artistId*, *artistName* }
+* *GET* api/albums/albums/id - Returns { [*...Listof albums*] } 
