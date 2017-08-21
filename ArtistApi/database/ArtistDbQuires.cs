@@ -80,7 +80,7 @@ namespace ArtistApi.DataBase
 
         public void Update(AlbumInfo albumInfo, int artistId)
         {
-
+            InsertNewAlbum(albumInfo, artistId);
         }
 
         public void Delete(int artistId)
@@ -166,7 +166,6 @@ namespace ArtistApi.DataBase
             {
                 info.AlbumName.ToLower();
                 info.Genre.ToLower();
-                info.Year.ToLower();
                 InsertNewAlbum(info, artistId);
             }
         }
@@ -175,7 +174,7 @@ namespace ArtistApi.DataBase
         {
             string albumName = albumInfo.AlbumName;
             string genre = albumInfo.Genre;
-            string year = albumInfo.Year;
+            int year = albumInfo.Year;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -188,7 +187,7 @@ namespace ArtistApi.DataBase
                 command.Parameters.Add("@artistId", SqlDbType.Int).Value = artistId;
                 command.Parameters.Add("@albumName", SqlDbType.NVarChar, 128).Value = albumName;
                 command.Parameters.Add("@genre", SqlDbType.NVarChar, 128).Value = genre;
-                command.Parameters.Add("@albumYear", SqlDbType.NVarChar, 128).Value = year;
+                command.Parameters.Add("@albumYear", SqlDbType.Int, 128).Value = year;
                 command.ExecuteNonQuery();
             }
         }
@@ -238,7 +237,7 @@ namespace ArtistApi.DataBase
             {
                 AlbumName = reader.GetString(4),
                 Genre = reader.GetString(5),
-                Year = reader.GetString(6)
+                Year = reader.GetInt32(6)
             };
         }
 

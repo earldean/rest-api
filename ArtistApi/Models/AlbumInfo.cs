@@ -11,6 +11,6 @@ namespace ArtistApi.Models
 
         public string AlbumName { get; set; }
         public string Genre { get; set; }
-        public string Year { get; set; }
+        public int Year { get; set; }
     }
 }

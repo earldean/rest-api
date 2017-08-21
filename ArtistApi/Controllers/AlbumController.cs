@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ArtistApi.Models;
 using ArtistApi.DataBase;
@@ -72,9 +70,22 @@ namespace ArtistApi.Controllers
 
         // PUT api/album/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]AlbumInfo albumInfo)
+        public IActionResult Put(int id, [FromBody]AlbumInfo albumInfo)
         {
+            if (id <= 0)
+            {
+                return BadArtistIdRequest();
+            }
 
+            try
+            {
+                artistQueries.Update(albumInfo, id);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
+            return Ok();
         }
 
         // DELETE api/album

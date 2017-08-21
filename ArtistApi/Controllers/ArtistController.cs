@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ArtistApi.Interfaces;
 using ArtistApi.DataBase;
@@ -10,7 +8,7 @@ using ArtistApi.DataBase;
 
 namespace ArtistApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class ArtistController : Controller
     {
         private IArtistQueries artistQueries;
@@ -27,34 +25,34 @@ namespace ArtistApi.Controllers
 
         // GET: api/values
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult All()
         {
-            return Json(artistQueries.GetAllArtist());
+            try
+            {
+                return Json(artistQueries.GetAllArtist());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public IActionResult Get(int artistId)
+        public IActionResult Albums(int id)
         {
-            return Json(artistQueries.GetAlbumsFromArtist(artistId));
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                return Json(artistQueries.GetAlbumsFromArtist(id));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

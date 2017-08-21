@@ -45,7 +45,7 @@ namespace ArtistApi.DataBase
                     {
                         AlbumName = albumData[0],
                         Genre = albumData[2],
-                        Year = albumData[3]
+                        Year = Int32.Parse(albumData[3])
                     };
                     artistQuieries.InsertNewAlbum(albumInfo, artistId);
                 }
