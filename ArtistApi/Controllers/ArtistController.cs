@@ -34,9 +34,9 @@ namespace ArtistApi.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(int artistId)
         {
-            return Json(artistQueries.GetAlbums("oasis"));
+            return Json(artistQueries.GetAlbumsFromArtist(artistId));
         }
 
         // POST api/values

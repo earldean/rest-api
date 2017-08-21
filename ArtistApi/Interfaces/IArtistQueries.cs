@@ -14,10 +14,25 @@ namespace ArtistApi.Interfaces
 
         void InsertNewAlbum(string[] albumInfo);
 
-        List<ArtistValues> GetAllArtist();
+        /// <summary>
+        /// Artist Index to return all artist names and asscoiated artistId
+        /// </summary>
+        /// <returns>List of Artist</returns>
+        List<Artist> GetAllArtist();
 
-        List<string> GetAlbums(string artistName);
+        List<string> GetAlbumsFromArtist(int artistId);
 
+        /// <summary>
+        /// Read operation for Albums Controller
+        /// </summary>
+        /// <param name="artistId"></param>
+        /// <returns></returns>
+        ArtistInfo GetArtistInfo(int artistId);
+
+        /// <summary>
+        /// Delete operation for albums controller
+        /// </summary>
+        /// <param name="artistId"></param>
         void DeleteArtistInfo(int artistId);
     }
 }

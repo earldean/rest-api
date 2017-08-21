@@ -35,7 +35,7 @@ namespace ArtistApi.Models
             }
         }
 
-        public List<ArtistValues> GetAllArtist()
+        public List<Artist> GetAllArtist()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -43,14 +43,14 @@ namespace ArtistApi.Models
                 string commandString = "select * from Artists";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.CommandType = CommandType.Text;
-                List<ArtistValues> artists = new List<ArtistValues>();
+                List<Artist> artists = new List<Artist>();
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.HasRows)
                     {
                         while (reader.Read())
                         {
-                            ArtistValues value = new ArtistValues()
+                            Artist value = new Artist()
                             {
                                 Id = reader.GetInt32(0),
                                 ArtistName = reader.GetString(1)
@@ -64,16 +64,16 @@ namespace ArtistApi.Models
            }
         }
 
-        public List<string> GetAlbums(string artistName)
+        public List<string> GetAlbumsFromArtist(int artistId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 string commandString =
-                    "Select AlbumName from Albums where artistName = @ArtistName";
+                    "Select AlbumName from Albums where ArtistId = @ArtistId";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.CommandType = CommandType.Text;
-                command.Parameters.Add("@ArtistName", SqlDbType.NVarChar).Value = artistName;
+                command.Parameters.Add("@ArtistId", SqlDbType.Int).Value = artistId;
                 List<string> albums = new List<string>();
                 using (var reader = command.ExecuteReader())
                 {
@@ -106,6 +106,7 @@ namespace ArtistApi.Models
                     @"Insert Into Albums " +
                     "Values (@artistId, @albumName, @genre, @albumYear)";
                 SqlCommand command = new SqlCommand(commandString, connection);
+                command.CommandType = CommandType.Text;
                 command.Parameters.Add("@artistId", SqlDbType.Int).Value = artistId;
                 command.Parameters.Add("@albumName", SqlDbType.NVarChar, 128).Value = albumName;
                 command.Parameters.Add("@genre", SqlDbType.NVarChar, 128).Value = genre;
@@ -123,8 +124,55 @@ namespace ArtistApi.Models
                     @"Insert Into Artists " + 
                     "Values (@artistName)";
                 SqlCommand command = new SqlCommand(commandString, connection);
+                command.CommandType = CommandType.Text;
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
                 command.ExecuteNonQuery();
+            }
+        }
+
+        public ArtistInfo GetArtistInfo(int artistId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string commandString =
+                    "select * " +
+                    "from Artists " +
+                    "inner join Albums " +
+                    "on Artists.ArtistId = Albums.ArtistId " +
+                    "where Artists.ArtistId = @id";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.CommandType = CommandType.Text;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = artistId;
+
+                ArtistInfo artistInfo = new ArtistInfo();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                    {
+                        return null;
+                    }
+
+                    bool firstRow = true;
+                    while (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            if (firstRow)
+                            {
+                                artistInfo.ArtistName = reader.GetString(1);
+                                artistInfo.Albums.Add(GetAlbumInfo(reader));
+                                firstRow = false;
+                            }
+                            else
+                            {
+                                artistInfo.Albums.Add(GetAlbumInfo(reader));
+                            }
+                        }
+                        reader.NextResult();
+                    }
+                }
+                return artistInfo;
             }
         }
 
@@ -156,6 +204,16 @@ namespace ArtistApi.Models
                 command.Parameters.Add("@id", SqlDbType.Int).Value = artistId;
                 command.ExecuteNonQuery();
             }
+        }
+
+        private AlbumInfo GetAlbumInfo(SqlDataReader reader)
+        {
+            return new AlbumInfo()
+            {
+                AlbumName = reader.GetString(4),
+                Genre = reader.GetString(5),
+                Year = reader.GetInt32(6)
+            };
         }
     }
 }
