@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using ArtistApi.Interfaces;
-using ArtistApi.Types;
+using ArtistApi.Models;
 using System.Data;
 
-namespace ArtistApi.Models
+namespace ArtistApi.DataBase
 {
     /// <summary>
     /// API for accesing Artist DB
     /// </summary>
-    public class ArtistDbQuires : IArtistQueries
+    public class ArtistDbQuires : IArtistQueries, ICrudOperations
     {
         private readonly string connectionString;
 
@@ -21,8 +21,72 @@ namespace ArtistApi.Models
 
         public void Create(ArtistInfo artistInfo)
         {
-            string artistName = artistInfo.ArtistName.ToLower();
-            InsertNewAlbum(artistInfo);
+            artistInfo.ArtistName.ToLower();
+            string artistName = artistInfo.ArtistName;
+            if (!ArtistExists(artistName))
+            {
+                InsertNewArtist(artistName);
+            }
+
+            int artistId = GetArtistPrimaryKey(artistName);
+            InsertAlbums(artistInfo.Albums, artistId);
+        }
+
+        public ArtistInfo Read(int artistId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string commandString =
+                    "select * " +
+                    "from Artists " +
+                    "inner join Albums " +
+                    "on Artists.ArtistId = Albums.ArtistId " +
+                    "where Artists.ArtistId = @id";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.CommandType = CommandType.Text;
+                command.Parameters.Add("@id", SqlDbType.Int).Value = artistId;
+
+                ArtistInfo artistInfo = new ArtistInfo();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.HasRows)
+                    {
+                        return null;
+                    }
+
+                    bool firstRow = true;
+                    while (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            if (firstRow)
+                            {
+                                artistInfo.ArtistName = reader.GetString(1);
+                                artistInfo.Albums.Add(GetAlbumInfo(reader));
+                                firstRow = false;
+                            }
+                            else
+                            {
+                                artistInfo.Albums.Add(GetAlbumInfo(reader));
+                            }
+                        }
+                        reader.NextResult();
+                    }
+                }
+                return artistInfo;
+            }
+        }
+
+        public void Update(AlbumInfo albumInfo, int artistId)
+        {
+
+        }
+
+        public void Delete(int artistId)
+        {
+            DeleteFromAlbumsTable(artistId);
+            DeleteFromArtistsTable(artistId);
         }
 
         public int GetArtistPrimaryKey(string artistName)
@@ -96,39 +160,22 @@ namespace ArtistApi.Models
             }
         }
 
-        private void InsertNewAlbum(ArtistInfo artistInfo)
+        private void InsertAlbums(List<AlbumInfo> albums, int artistId)
         {
-            artistInfo.ArtistName.ToLower();
-            if (!ArtistExists(artistInfo.ArtistName))
-            {
-                InsertNewArtist(artistInfo.ArtistName);
-            }
-
-            foreach (AlbumInfo info in artistInfo.Albums)
+            foreach (AlbumInfo info in albums)
             {
                 info.AlbumName.ToLower();
                 info.Genre.ToLower();
                 info.Year.ToLower();
-            }
-
-            foreach (AlbumInfo info in artistInfo.Albums)
-            {
-                string[] albumArray =
-                {
-                    info.AlbumName, artistInfo.ArtistName, info.Genre, info.Year
-                };
-                InsertNewAlbum(albumArray);
+                InsertNewAlbum(info, artistId);
             }
         }
 
-        public void InsertNewAlbum(string[] albumInfo)
+        public void InsertNewAlbum(AlbumInfo albumInfo, int artistId)
         {
-            string albumName = albumInfo[0];
-            string artistName = albumInfo[1];
-            string genre = albumInfo[2];
-            string year = albumInfo[3];
-
-            int artistId = GetArtistPrimaryKey(artistName);
+            string albumName = albumInfo.AlbumName;
+            string genre = albumInfo.Genre;
+            string year = albumInfo.Year;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -159,58 +206,6 @@ namespace ArtistApi.Models
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
                 command.ExecuteNonQuery();
             }
-        }
-
-        public ArtistInfo Read(int artistId)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string commandString =
-                    "select * " +
-                    "from Artists " +
-                    "inner join Albums " +
-                    "on Artists.ArtistId = Albums.ArtistId " +
-                    "where Artists.ArtistId = @id";
-                SqlCommand command = new SqlCommand(commandString, connection);
-                command.CommandType = CommandType.Text;
-                command.Parameters.Add("@id", SqlDbType.Int).Value = artistId;
-
-                ArtistInfo artistInfo = new ArtistInfo();
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    if (!reader.HasRows)
-                    {
-                        return null;
-                    }
-
-                    bool firstRow = true;
-                    while (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            if (firstRow)
-                            {
-                                artistInfo.ArtistName = reader.GetString(1);
-                                artistInfo.Albums.Add(GetAlbumInfo(reader));
-                                firstRow = false;
-                            }
-                            else
-                            {
-                                artistInfo.Albums.Add(GetAlbumInfo(reader));
-                            }
-                        }
-                        reader.NextResult();
-                    }
-                }
-                return artistInfo;
-            }
-        }
-
-        public void Delete(int artistId)
-        {
-            DeleteFromAlbumsTable(artistId);
-            DeleteFromArtistsTable(artistId);
         }
 
         private void DeleteFromArtistsTable(int artistId)

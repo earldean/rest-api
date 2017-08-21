@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
-using System.Data.SqlClient;
+using ArtistApi.Models;
 
-namespace ArtistApi.Models
+namespace ArtistApi.DataBase
 {
     /// <summary>
     /// Populate initial DB from provided csv
@@ -13,7 +13,6 @@ namespace ArtistApi.Models
     public class DbSeed
     {
         private const string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=Artist;Integrated Security=True";
-        private string pathToCsv = @"C:/users/edean/github/ArtistApi/ArtistApi/albums.csv";
         ArtistDbQuires artistQuieries;
 
         public DbSeed()
@@ -32,15 +31,23 @@ namespace ArtistApi.Models
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine().ToLower();
-                    string[] albumInfo = ParseAlbumInfo(line);
-                    string artist = albumInfo[1];
+                    string[] albumData = ParseAlbumInfo(line);
+                    string artistName = albumData[1];
 
-                    if (!artists.Contains(artist))
+                    if (!artists.Contains(artistName))
                     {
-                        artistQuieries.InsertNewArtist(artist);
-                        artists.Add(artist);
+                        artistQuieries.InsertNewArtist(artistName);
+                        artists.Add(artistName);
                     }
-                    artistQuieries.InsertNewAlbum(albumInfo);
+
+                    int artistId = artistQuieries.GetArtistPrimaryKey(artistName);
+                    AlbumInfo albumInfo = new AlbumInfo()
+                    {
+                        AlbumName = albumData[0],
+                        Genre = albumData[2],
+                        Year = albumData[3]
+                    };
+                    artistQuieries.InsertNewAlbum(albumInfo, artistId);
                 }
             }
         }

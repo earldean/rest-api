@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ArtistApi.Models;
-using ArtistApi.Types;
+using ArtistApi.DataBase;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -72,8 +72,9 @@ namespace ArtistApi.Controllers
 
         // PUT api/album/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]AlbumInfo albumInfo)
         {
+
         }
 
         // DELETE api/album

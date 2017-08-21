@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArtistApi.Types
+namespace ArtistApi.Models
 {
     public class AlbumInfo
     {
