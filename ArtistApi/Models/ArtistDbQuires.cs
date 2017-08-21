@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Data.SqlClient;
 using ArtistApi.Interfaces;
 using ArtistApi.Types;
@@ -131,11 +128,33 @@ namespace ArtistApi.Models
             }
         }
 
-        public void DeleteArtistInfo(string artistName)
+        public void DeleteArtistInfo(int artistId)
+        {
+            DeleteFromAlbumsTable(artistId);
+            DeleteFromArtistsTable(artistId);
+        }
+
+        private void DeleteFromArtistsTable(int artistId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                connection.Open();
+                string commandString = "delete from artists where ArtistId = @id";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.Parameters.Add("@id", SqlDbType.Int).Value = artistId;
+                command.ExecuteNonQuery();
+            }
+        }
 
+        private void DeleteFromAlbumsTable(int artistId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string commandString = "delete from albums where ArtistId = @id";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.Parameters.Add("@id", SqlDbType.Int).Value = artistId;
+                command.ExecuteNonQuery();
             }
         }
     }

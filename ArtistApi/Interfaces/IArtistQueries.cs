@@ -18,6 +18,6 @@ namespace ArtistApi.Interfaces
 
         List<string> GetAlbums(string artistName);
 
-        void DeleteArtistInfo(string artistName);
+        void DeleteArtistInfo(int artistId);
     }
 }

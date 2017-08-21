@@ -15,16 +15,18 @@ namespace ArtistApi.Controllers
     [Route("api/[controller]")]
     public class AlbumController : Controller
     {
+        private readonly ArtistDbQuires artistQueries;
+
         public AlbumController()
         {
-
+            artistQueries = new ArtistDbQuires("Data Source=.\\SQLEXPRESS;Initial Catalog=Artist;Integrated Security=True");
         }
 
         // GET: api/album
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            //DbSeed dbSeed = new DbSeed();
+            DbSeed dbSeed = new DbSeed();
             return new string[] { "value1", "value2" };
         }
 
@@ -49,8 +51,23 @@ namespace ArtistApi.Controllers
 
         // DELETE api/album
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            if (id == 0)
+            {
+                return BadRequest("ArtistId must be int greater than zero.  " +
+                    "Check ArtistIndex for associated artistId.");
+            }
+            try
+            {
+                artistQueries.DeleteArtistInfo(id);
+            }
+            catch (Exception e) 
+            {
+                StatusCode(500);
+            }
+
+            return Ok("Delete Successfull");
         }
     }
 }
