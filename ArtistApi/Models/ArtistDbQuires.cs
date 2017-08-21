@@ -21,18 +21,18 @@ namespace ArtistApi.Models
             this.connectionString = connectionString;
         }
 
-        public Guid GetArtistPrimaryKey(string artistName)
+        public int GetArtistPrimaryKey(string artistName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 string commandString = 
                     @"select ArtistId " +
-                    "from dbo.ArtistName " +
+                    "from dbo.Artists " +
                     "where ArtistName = @artistName";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
-                Guid artistId = (Guid)command.ExecuteScalar();
+                int artistId = (int)command.ExecuteScalar();
                 return artistId;
             }
         }
@@ -42,7 +42,7 @@ namespace ArtistApi.Models
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string commandString = "select ArtistName from ArtistName";
+                string commandString = "select ArtistName from Artists";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.CommandType = CommandType.Text;
                 List<string> artists = new List<string>();
@@ -93,39 +93,44 @@ namespace ArtistApi.Models
             string artistName = albumInfo[1];
             string genre = albumInfo[2];
             string year = albumInfo[3];
-            Guid artistId = GetArtistPrimaryKey(artistName);
+
+            int artistId = GetArtistPrimaryKey(artistName);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 string commandString =
                     @"Insert Into Albums " +
-                    "Values (@artistId, @artistName, @albumName, @genre, @year)";
+                    "Values (@artistId, @albumName, @genre, @albumYear)";
                 SqlCommand command = new SqlCommand(commandString, connection);
-                command.Parameters.Add("@artistId", SqlDbType.UniqueIdentifier).Value = artistId;
-                command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
+                command.Parameters.Add("@artistId", SqlDbType.Int).Value = artistId;
                 command.Parameters.Add("@albumName", SqlDbType.NVarChar, 128).Value = albumName;
                 command.Parameters.Add("@genre", SqlDbType.NVarChar, 128).Value = genre;
-                command.Parameters.Add("@year", SqlDbType.NVarChar, 128).Value = year;
-                command.ExecuteScalar();
+                command.Parameters.Add("@albumYear", SqlDbType.NVarChar, 128).Value = year;
+                command.ExecuteNonQuery();
             }
         }
 
-        public Guid InsertNewArtist(string artist)
+        public void InsertNewArtist(string artistName)
         {
-            Guid guid = Guid.NewGuid();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 string commandString =
-                    @"Insert Into ArtistName " + 
-                    "Values (@guid, @artistName)";
+                    @"Insert Into Artists " + 
+                    "Values (@artistName)";
                 SqlCommand command = new SqlCommand(commandString, connection);
-                command.Parameters.Add("@guid", SqlDbType.UniqueIdentifier).Value = guid;
-                command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artist;
-                command.ExecuteScalar();
+                command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
+                command.ExecuteNonQuery();
             }
-            return guid;
+        }
+
+        public void DeleteArtistInfo(string artistName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+            }
         }
     }
 }

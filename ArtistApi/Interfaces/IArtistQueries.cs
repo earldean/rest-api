@@ -7,14 +7,16 @@ namespace ArtistApi.Interfaces
 {
     public interface IArtistQueries
     {
-        Guid GetArtistPrimaryKey(string artistName);
+        int GetArtistPrimaryKey(string artistName);
 
-        Guid InsertNewArtist(string artist);
+        void InsertNewArtist(string artist);
 
         void InsertNewAlbum(string[] albumInfo);
 
         List<string> GetAllArtist();
 
         List<string> GetAlbums(string artistName);
+
+        void DeleteArtistInfo(string artistName);
     }
 }
