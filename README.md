@@ -14,7 +14,7 @@
 * *DELETE* api/album/id - Param: ArtistId
 
 * *GET* api/artist/all - Returns { *artistId*, *artistName* }
-* *GET* api/albums/albums/id - Returns { [*...Listof albums*] } 
+* *GET* api/artist/albums/id - Returns { [*...Listof albums*] } 
 
 ## Object examples 
 **ArtistInfo**
