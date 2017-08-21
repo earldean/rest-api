@@ -21,8 +21,9 @@ namespace ArtistApi.DataBase
 
         public void Create(ArtistInfo artistInfo)
         {
-            artistInfo.ArtistName.ToLower();
+            artistInfo.ArtistName = artistInfo.ArtistName.ToLower();
             string artistName = artistInfo.ArtistName;
+
             if (!ArtistExists(artistName))
             {
                 InsertNewArtist(artistName);
@@ -97,7 +98,7 @@ namespace ArtistApi.DataBase
                 string commandString = 
                     @"select ArtistId " +
                     "from dbo.Artists " +
-                    "where ArtistName = @artistName";
+                    "where ArtistName = Lower(@artistName)";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
                 int artistId = (int)command.ExecuteScalar();
@@ -164,8 +165,8 @@ namespace ArtistApi.DataBase
         {
             foreach (AlbumInfo info in albums)
             {
-                info.AlbumName.ToLower();
-                info.Genre.ToLower();
+                info.AlbumName = info.AlbumName.ToLower();
+                info.Genre = info.Genre.ToLower();
                 InsertNewAlbum(info, artistId);
             }
         }
@@ -181,7 +182,7 @@ namespace ArtistApi.DataBase
                 connection.Open();
                 string commandString =
                     @"Insert Into Albums " +
-                    "Values (@artistId, @albumName, @genre, @albumYear)";
+                    "Values (Lower(@artistId), Lower(@albumName), Lower(@genre), @albumYear)";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.CommandType = CommandType.Text;
                 command.Parameters.Add("@artistId", SqlDbType.Int).Value = artistId;
@@ -199,7 +200,7 @@ namespace ArtistApi.DataBase
                 connection.Open();
                 string commandString =
                     @"Insert Into Artists " + 
-                    "Values (@artistName)";
+                    "Values (Lower(@artistName))";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.CommandType = CommandType.Text;
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar, 128).Value = artistName;
@@ -249,7 +250,7 @@ namespace ArtistApi.DataBase
                 string commandString =
                     "Select ArtistId " +
                     "From Artists " +
-                    "Where ArtistName = @artistName";
+                    "Where ArtistName = Lower(@artistName)";
                 SqlCommand command = new SqlCommand(commandString, connection);
                 command.Parameters.Add("@artistName", SqlDbType.NVarChar).Value = artistName;
 

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.IO;
 using ArtistApi.Models;
 
@@ -30,7 +28,7 @@ namespace ArtistApi.DataBase
                 var firstline = reader.ReadLine(); // read the first line which just has colum names
                 while (!reader.EndOfStream)
                 {
-                    var line = reader.ReadLine().ToLower();
+                    var line = reader.ReadLine();
                     string[] albumData = ParseAlbumInfo(line);
                     string artistName = albumData[1];
 
