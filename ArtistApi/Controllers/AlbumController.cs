@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ArtistApi.Models;
-using ArtistApi.DataBase;
+using ArtistApi.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,11 +14,11 @@ namespace ArtistApi.Controllers
     [Route("api/[controller]")]
     public class AlbumController : Controller
     {
-        private readonly ArtistDbQuires artistQueries;
+        private readonly ICrudOperations artistQueries;
 
-        public AlbumController()
+        public AlbumController(ICrudOperations artistQueries)
         {
-            artistQueries = new ArtistDbQuires("Data Source=.\\SQLEXPRESS;Initial Catalog=Artist;Integrated Security=True");
+            this.artistQueries = artistQueries;
         }
 
         // GET: api/album

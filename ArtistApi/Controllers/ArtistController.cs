@@ -13,14 +13,9 @@ namespace ArtistApi.Controllers
     {
         private IArtistQueries artistQueries;
 
-        //public ArtistController(IArtistQueries artistQueries)
-        //{
-        //    this.artistQueries = artistQueries;
-        //}
-
-        public ArtistController()
+        public ArtistController(IArtistQueries artistQueries)
         {
-            artistQueries = new ArtistDbQuires("Data Source=.\\SQLEXPRESS;Initial Catalog=Artist;Integrated Security=True");
+            this.artistQueries = artistQueries;
         }
 
         // GET: api/values

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 using ArtistApi.DataBase;
 using ArtistApi.Interfaces;
 
@@ -32,7 +30,8 @@ namespace ArtistApi
         {
             // Add framework services.
             services.AddMvc();
-            services.AddTransient<IArtistQueries, ArtistDbQuires>();
+            services.AddTransient<IArtistQueries>(s => new ArtistDbQuires(Configuration.GetConnectionString("ArtistDb")));
+            services.AddTransient<ICrudOperations>(s => new ArtistDbQuires(Configuration.GetConnectionString("ArtistDb")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
