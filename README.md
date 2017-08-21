@@ -15,3 +15,23 @@
 
 * *GET* api/artist/all - Returns { *artistId*, *artistName* }
 * *GET* api/albums/albums/id - Returns { [*...Listof albums*] } 
+
+## Object examples 
+**ArtistInfo**
+~~~~
+{
+    "artistName": "STRFKR",
+    "albums": [
+        {
+            "albumName": "Jupiter",
+            "genre": "electopop",
+            "year": 2009
+        },
+        {
+            "albumName": "reptilians",
+            "genre": "electropop",
+            "year": 2011
+        }
+    ]
+}
+~~~~
