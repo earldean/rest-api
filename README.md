@@ -35,3 +35,12 @@
     ]
 }
 ~~~~
+
+**AlbumInfo**
+~~~~
+{
+	"albumName": "Miracle Mile",
+	"genre": "indie rock",
+	"year": 2013
+}
+~~~~
