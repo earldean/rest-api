@@ -39,8 +39,8 @@
 **AlbumInfo**
 ~~~~
 {
-	"albumName": "Miracle Mile",
-	"genre": "indie rock",
-	"year": 2013
+    "albumName": "Miracle Mile",
+    "genre": "indie rock",
+    "year": 2013
 }
 ~~~~
