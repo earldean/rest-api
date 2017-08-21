@@ -42,7 +42,7 @@ namespace ArtistApi.Controllers
 
             try
             {
-                ArtistInfo artistInfo = artistQueries.GetArtistInfo(id);
+                ArtistInfo artistInfo = artistQueries.Read(id);
                 if (artistInfo == null)
                 {
                     return NotFound();
@@ -57,8 +57,17 @@ namespace ArtistApi.Controllers
 
         // POST api/album
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody]ArtistInfo artistInfo)
         {
+            try
+            {
+                artistQueries.Create(artistInfo);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
+            return Ok();
         }
 
         // PUT api/album/5
@@ -77,7 +86,7 @@ namespace ArtistApi.Controllers
             }
             try
             {
-                artistQueries.DeleteArtistInfo(id);
+                artistQueries.Delete(id);
             }
             catch (Exception e)
             {

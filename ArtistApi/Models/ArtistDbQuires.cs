@@ -19,6 +19,12 @@ namespace ArtistApi.Models
             this.connectionString = connectionString;
         }
 
+        public void Create(ArtistInfo artistInfo)
+        {
+            string artistName = artistInfo.ArtistName.ToLower();
+            InsertNewAlbum(artistInfo);
+        }
+
         public int GetArtistPrimaryKey(string artistName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -90,6 +96,31 @@ namespace ArtistApi.Models
             }
         }
 
+        private void InsertNewAlbum(ArtistInfo artistInfo)
+        {
+            artistInfo.ArtistName.ToLower();
+            if (!ArtistExists(artistInfo.ArtistName))
+            {
+                InsertNewArtist(artistInfo.ArtistName);
+            }
+
+            foreach (AlbumInfo info in artistInfo.Albums)
+            {
+                info.AlbumName.ToLower();
+                info.Genre.ToLower();
+                info.Year.ToLower();
+            }
+
+            foreach (AlbumInfo info in artistInfo.Albums)
+            {
+                string[] albumArray =
+                {
+                    info.AlbumName, artistInfo.ArtistName, info.Genre, info.Year
+                };
+                InsertNewAlbum(albumArray);
+            }
+        }
+
         public void InsertNewAlbum(string[] albumInfo)
         {
             string albumName = albumInfo[0];
@@ -130,7 +161,7 @@ namespace ArtistApi.Models
             }
         }
 
-        public ArtistInfo GetArtistInfo(int artistId)
+        public ArtistInfo Read(int artistId)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -176,7 +207,7 @@ namespace ArtistApi.Models
             }
         }
 
-        public void DeleteArtistInfo(int artistId)
+        public void Delete(int artistId)
         {
             DeleteFromAlbumsTable(artistId);
             DeleteFromArtistsTable(artistId);
@@ -212,8 +243,34 @@ namespace ArtistApi.Models
             {
                 AlbumName = reader.GetString(4),
                 Genre = reader.GetString(5),
-                Year = reader.GetInt32(6)
+                Year = reader.GetString(6)
             };
+        }
+
+        private bool ArtistExists(string artistName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string commandString =
+                    "Select ArtistId " +
+                    "From Artists " +
+                    "Where ArtistName = @artistName";
+                SqlCommand command = new SqlCommand(commandString, connection);
+                command.Parameters.Add("@artistName", SqlDbType.NVarChar).Value = artistName;
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
         }
     }
 }

@@ -23,16 +23,22 @@ namespace ArtistApi.Interfaces
         List<string> GetAlbumsFromArtist(int artistId);
 
         /// <summary>
+        /// Create operation 
+        /// </summary>
+        /// <param name=""></param>
+        void Create(ArtistInfo artistInfo);
+
+        /// <summary>
         /// Read operation for Albums Controller
         /// </summary>
         /// <param name="artistId"></param>
         /// <returns></returns>
-        ArtistInfo GetArtistInfo(int artistId);
+        ArtistInfo Read(int artistId);
 
         /// <summary>
         /// Delete operation for albums controller
         /// </summary>
         /// <param name="artistId"></param>
-        void DeleteArtistInfo(int artistId);
+        void Delete(int artistId);
     }
 }
