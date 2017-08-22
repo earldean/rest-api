@@ -21,6 +21,8 @@ namespace ArtistApi
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+
+            //DbSeed dbSeed = new DbSeed();
         }
 
         public IConfigurationRoot Configuration { get; }

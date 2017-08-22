@@ -22,14 +22,6 @@ namespace ArtistApi.Controllers
             this.artistQueries = artistQueries;
         }
 
-        // GET: api/album
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            //DbSeed dbSeed = new DbSeed();
-            return new string[] { "value1", "value2" };
-        }
-
         // GET api/Album/5
         [HttpGet("{id}")]
         public IActionResult Get(int id)
